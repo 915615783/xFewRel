@@ -9,6 +9,7 @@ import torch
 from torch import autograd, optim, nn
 from torch.autograd import Variable
 from torch.nn import functional as F
+from tqdm import tqdm
 # from pytorch_pretrained_bert import BertAdam
 from transformers import AdamW, get_linear_schedule_with_warmup
 
@@ -190,100 +191,101 @@ class FewShotREFramework:
         iter_right = 0.0
         iter_right_dis = 0.0
         iter_sample = 0.0
-        for it in range(start_iter, start_iter + train_iter):
-            if pair:
-                batch, label = next(self.train_data_loader)
-                if torch.cuda.is_available():
-                    for k in batch:
-                        batch[k] = batch[k].cuda()
-                    label = label.cuda()
-                logits, pred = model(batch, N_for_train, K, 
-                        Q * N_for_train + na_rate * Q)
-            else:
-                support, query, label = next(self.train_data_loader)
-                if torch.cuda.is_available():
-                    for k in support:
-                        support[k] = support[k].cuda()
-                    for k in query:
-                        query[k] = query[k].cuda()
-                    label = label.cuda()
+        with tqdm(range(start_iter, start_iter + train_iter)) as tTqdm:
+            for it in tTqdm:
+                if pair:
+                    batch, label = next(self.train_data_loader)
+                    if torch.cuda.is_available():
+                        for k in batch:
+                            batch[k] = batch[k].cuda()
+                        label = label.cuda()
+                    logits, pred = model(batch, N_for_train, K, 
+                            Q * N_for_train + na_rate * Q)
+                else:
+                    support, query, label = next(self.train_data_loader)
+                    if torch.cuda.is_available():
+                        for k in support:
+                            support[k] = support[k].cuda()
+                        for k in query:
+                            query[k] = query[k].cuda()
+                        label = label.cuda()
 
-                logits, pred  = model(support, query, 
-                        N_for_train, K, Q * N_for_train + na_rate * Q)
-            loss = model.loss(logits, label) / float(grad_iter)
-            right = model.accuracy(pred, label)
-            if fp16:
-                with amp.scale_loss(loss, optimizer) as scaled_loss:
-                    scaled_loss.backward()
-                # torch.nn.utils.clip_grad_norm_(amp.master_params(optimizer), 10)
-            else:
-                loss.backward()
-                # torch.nn.utils.clip_grad_norm_(model.parameters(), 10)
-            
-            if it % grad_iter == 0:
-                optimizer.step()
-                scheduler.step()
-                optimizer.zero_grad()
-            
-            # Adv part
-            if self.adv:
-                support_adv = next(self.adv_data_loader)
-                if torch.cuda.is_available():
-                    for k in support_adv:
-                        support_adv[k] = support_adv[k].cuda()
-
-                features_ori = model.sentence_encoder(support)
-                features_adv = model.sentence_encoder(support_adv)
-                features = torch.cat([features_ori, features_adv], 0) 
-                total = features.size(0)
-                dis_labels = torch.cat([torch.zeros((total//2)).long().cuda(),
-                    torch.ones((total//2)).long().cuda()], 0)
-                dis_logits = self.d(features)
-                loss_dis = self.adv_cost(dis_logits, dis_labels)
-                _, pred = dis_logits.max(-1)
-                right_dis = float((pred == dis_labels).long().sum()) / float(total)
+                    logits, pred  = model(support, query, 
+                            N_for_train, K, Q * N_for_train + na_rate * Q)
+                loss = model.loss(logits, label) / float(grad_iter)
+                right = model.accuracy(pred, label)
+                if fp16:
+                    with amp.scale_loss(loss, optimizer) as scaled_loss:
+                        scaled_loss.backward()
+                    # torch.nn.utils.clip_grad_norm_(amp.master_params(optimizer), 10)
+                else:
+                    loss.backward()
+                    # torch.nn.utils.clip_grad_norm_(model.parameters(), 10)
                 
-                loss_dis.backward(retain_graph=True)
-                optimizer_dis.step()
-                optimizer_dis.zero_grad()
-                optimizer_encoder.zero_grad()
+                if it % grad_iter == 0:
+                    optimizer.step()
+                    scheduler.step()
+                    optimizer.zero_grad()
+                
+                # Adv part
+                if self.adv:
+                    support_adv = next(self.adv_data_loader)
+                    if torch.cuda.is_available():
+                        for k in support_adv:
+                            support_adv[k] = support_adv[k].cuda()
 
-                loss_encoder = self.adv_cost(dis_logits, 1 - dis_labels)
-    
-                loss_encoder.backward(retain_graph=True)
-                optimizer_encoder.step()
-                optimizer_dis.zero_grad()
-                optimizer_encoder.zero_grad()
+                    features_ori = model.sentence_encoder(support)
+                    features_adv = model.sentence_encoder(support_adv)
+                    features = torch.cat([features_ori, features_adv], 0) 
+                    total = features.size(0)
+                    dis_labels = torch.cat([torch.zeros((total//2)).long().cuda(),
+                        torch.ones((total//2)).long().cuda()], 0)
+                    dis_logits = self.d(features)
+                    loss_dis = self.adv_cost(dis_logits, dis_labels)
+                    _, pred = dis_logits.max(-1)
+                    right_dis = float((pred == dis_labels).long().sum()) / float(total)
+                    
+                    loss_dis.backward(retain_graph=True)
+                    optimizer_dis.step()
+                    optimizer_dis.zero_grad()
+                    optimizer_encoder.zero_grad()
 
-                iter_loss_dis += self.item(loss_dis.data)
-                iter_right_dis += right_dis
+                    loss_encoder = self.adv_cost(dis_logits, 1 - dis_labels)
+        
+                    loss_encoder.backward(retain_graph=True)
+                    optimizer_encoder.step()
+                    optimizer_dis.zero_grad()
+                    optimizer_encoder.zero_grad()
 
-            iter_loss += self.item(loss.data)
-            iter_right += self.item(right.data)
-            iter_sample += 1
-            if self.adv:
-                sys.stdout.write('step: {0:4} | loss: {1:2.6f}, accuracy: {2:3.2f}%, dis_loss: {3:2.6f}, dis_acc: {4:2.6f}'
-                    .format(it + 1, iter_loss / iter_sample, 
-                        100 * iter_right / iter_sample,
-                        iter_loss_dis / iter_sample,
-                        100 * iter_right_dis / iter_sample) +'\r')
-            else:
-                sys.stdout.write('step: {0:4} | loss: {1:2.6f}, accuracy: {2:3.2f}%'.format(it + 1, iter_loss / iter_sample, 100 * iter_right / iter_sample) +'\r')
-            sys.stdout.flush()
+                    iter_loss_dis += self.item(loss_dis.data)
+                    iter_right_dis += right_dis
 
-            if (it + 1) % val_step == 0:
-                acc = self.eval(model, B, N_for_eval, K, Q, val_iter, 
-                        na_rate=na_rate, pair=pair)
-                model.train()
-                if acc > best_acc:
-                    print('Best checkpoint')
-                    torch.save({'state_dict': model.state_dict()}, save_ckpt)
-                    best_acc = acc
-                iter_loss = 0.
-                iter_loss_dis = 0.
-                iter_right = 0.
-                iter_right_dis = 0.
-                iter_sample = 0.
+                iter_loss += self.item(loss.data)
+                iter_right += self.item(right.data)
+                iter_sample += 1
+                if self.adv:
+                    tTqdm.set_description('step: {0:4} | loss: {1:2.6f}, accuracy: {2:3.2f}%, dis_loss: {3:2.6f}, dis_acc: {4:2.6f}'
+                        .format(it + 1, iter_loss / iter_sample, 
+                            100 * iter_right / iter_sample,
+                            iter_loss_dis / iter_sample,
+                            100 * iter_right_dis / iter_sample) +'\r')
+                else:
+                    tTqdm.set_description('step: {0:4} | loss: {1:2.6f}, accuracy: {2:3.2f}%'.format(it + 1, iter_loss / iter_sample, 100 * iter_right / iter_sample) +'\r')
+                # sys.stdout.flush()
+
+                if (it + 1) % val_step == 0:
+                    acc = self.eval(model, B, N_for_eval, K, Q, val_iter, 
+                            na_rate=na_rate, pair=pair)
+                    model.train()
+                    if acc > best_acc:
+                        print('Best checkpoint')
+                        torch.save({'state_dict': model.state_dict()}, save_ckpt)
+                        best_acc = acc
+                    iter_loss = 0.
+                    iter_loss_dis = 0.
+                    iter_right = 0.
+                    iter_right_dis = 0.
+                    iter_sample = 0.
                 
         print("\n####################\n")
         print("Finish training " + model_name)
