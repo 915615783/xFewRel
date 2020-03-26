@@ -45,7 +45,7 @@ def main():
             help='num of iters in testing')
     parser.add_argument('--val_step', default=2000, type=int,
            help='val after training how many iters')
-    parser.add_argument('--model', default='proto',
+    parser.add_argument('--model', default='siamese',
             help='model name')
     parser.add_argument('--encoder', default='cnn',
             help='encoder: cnn or bert or roberta')
