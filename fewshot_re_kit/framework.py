@@ -268,9 +268,9 @@ class FewShotREFramework:
                         .format(it + 1, iter_loss / iter_sample, 
                             100 * iter_right / iter_sample,
                             iter_loss_dis / iter_sample,
-                            100 * iter_right_dis / iter_sample) +'\r')
+                            100 * iter_right_dis / iter_sample))
                 else:
-                    tTqdm.set_description('step: {0:4} | loss: {1:2.6f}, accuracy: {2:3.2f}%'.format(it + 1, iter_loss / iter_sample, 100 * iter_right / iter_sample) +'\r')
+                    tTqdm.set_description('step: {0:4} | loss: {1:2.6f}, accuracy: {2:3.2f}%'.format(it + 1, iter_loss / iter_sample, 100 * iter_right / iter_sample))
                 # sys.stdout.flush()
 
                 if (it + 1) % val_step == 0:
