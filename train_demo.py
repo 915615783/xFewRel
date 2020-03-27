@@ -27,7 +27,7 @@ def main():
             help='test file')
     parser.add_argument('--adv', default=None,
             help='adv file')
-    parser.add_argument('--trainN', default=10, type=int,
+    parser.add_argument('--trainN', default=5, type=int,
             help='N in train')
     parser.add_argument('--N', default=5, type=int,
             help='N way')
@@ -35,7 +35,7 @@ def main():
             help='K shot')
     parser.add_argument('--Q', default=5, type=int,
             help='Num of query per class')
-    parser.add_argument('--batch_size', default=5, type=int,
+    parser.add_argument('--batch_size', default=1, type=int,
             help='batch size')
     parser.add_argument('--train_iter', default=30000, type=int,
             help='num of iters in training')
@@ -45,7 +45,7 @@ def main():
             help='num of iters in testing')
     parser.add_argument('--val_step', default=2000, type=int,
            help='val after training how many iters')
-    parser.add_argument('--model', default='siamese',
+    parser.add_argument('--model', default='proto',
             help='model name')
     parser.add_argument('--encoder', default='cnn',
             help='encoder: cnn or bert or roberta')
@@ -63,7 +63,7 @@ def main():
            help='accumulate gradient every x iterations')
     parser.add_argument('--optim', default='sgd',
            help='sgd / adam / adamw')
-    parser.add_argument('--hidden_size', default=230, type=int,
+    parser.add_argument('--hidden_size', default=2, type=int,
            help='hidden size')
     parser.add_argument('--load_ckpt', default=None,
            help='load ckpt')
