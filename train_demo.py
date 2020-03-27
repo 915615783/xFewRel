@@ -63,7 +63,7 @@ def main():
            help='accumulate gradient every x iterations')
     parser.add_argument('--optim', default='sgd',
            help='sgd / adam / adamw')
-    parser.add_argument('--hidden_size', default=2, type=int,
+    parser.add_argument('--hidden_size', default=2, type=int,    # hidden_size is here -----------------------------
            help='hidden size')
     parser.add_argument('--load_ckpt', default=None,
            help='load ckpt')
@@ -87,6 +87,7 @@ def main():
     model_name = opt.model
     encoder_name = opt.encoder
     max_length = opt.max_length
+    hidden_size = opt.hidden_size
     
     print("{}-way-{}-shot Few-Shot Relation Classification".format(N, K))
     print("model: {}".format(model_name))
@@ -102,7 +103,8 @@ def main():
         sentence_encoder = CNNSentenceEncoder(
                 glove_mat,
                 glove_word2id,
-                max_length)
+                max_length,
+                hidden_size=hidden_size)
     elif encoder_name == 'bert':
         pretrain_ckpt = opt.pretrain_ckpt or 'bert-base-uncased'
         if opt.pair:
