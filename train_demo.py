@@ -27,7 +27,7 @@ def main():
             help='test file')
     parser.add_argument('--adv', default=None,
             help='adv file')
-    parser.add_argument('--trainN', default=5, type=int,
+    parser.add_argument('--trainN', default=10, type=int,
             help='N in train')
     parser.add_argument('--N', default=5, type=int,
             help='N way')
@@ -35,15 +35,15 @@ def main():
             help='K shot')
     parser.add_argument('--Q', default=5, type=int,
             help='Num of query per class')
-    parser.add_argument('--batch_size', default=1, type=int,
+    parser.add_argument('--batch_size', default=10, type=int,
             help='batch size')
     parser.add_argument('--train_iter', default=30000, type=int,
             help='num of iters in training')
-    parser.add_argument('--val_iter', default=1000, type=int,
+    parser.add_argument('--val_iter', default=300, type=int,
             help='num of iters in validation')
     parser.add_argument('--test_iter', default=10000, type=int,
             help='num of iters in testing')
-    parser.add_argument('--val_step', default=2000, type=int,
+    parser.add_argument('--val_step', default=500, type=int,
            help='val after training how many iters')
     parser.add_argument('--model', default='proto',
             help='model name')
