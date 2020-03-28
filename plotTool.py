@@ -29,9 +29,9 @@ def plot2D(support_emb, query_emb, label, N, K, total_Q, hidden_size, plot_num=2
             plt.scatter(support[n, :, 0], support[n, :, 1], c=colors[n], marker='^')
         # plot query
         plt.scatter(query[:, 0], query[:, 1], c=[colors[label[q]] for q in range(total_Q)], marker='.')
-        plt.savefig('image/%d.png'%figcount, dpi=300)
+        plt.savefig('image/%d.png'%figcount, dpi=150)
         figcount += 1
-        plt.show()
+        plt.cla()
 
 
 # plt.scatter([1, 2, 2], [1, 2, 1], c=['black', 'pink', 'm'], marker='^')
