@@ -71,11 +71,14 @@ class FewRelDatasetForNormalSoftmax(data.Dataset):
 # d = FewRelDatasetForNormalSoftmax('train_wiki', None, 1, 1, 1, 0)
 # print(d.classes)
 # print(d.class2id)
+# print(len(d.json_data))
 
 # v = FewRelDatasetForNormalSoftmax('val_wiki', None, 1, 1, 1, 0)
 # print(v.classes)
+# print(len(v.json_data))
 # for i in v.classes:
 #     print(i, i in d.classes)
+
 
 #moudle.train can check if the model is eval or train
 
