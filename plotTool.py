@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
+import os
 
 # draw picture to find out where is the na data
 # two type, support and query, we use two shape to indicate it
@@ -15,6 +16,9 @@ def plot2D(support_emb, query_emb, label, N, K, total_Q, hidden_size, plot_num=2
     support_emb = support_emb.view(-1, N, K, hidden_size).cpu().numpy() # (b, N, K, h)
     query_emb = query_emb.view(-1, total_Q, hidden_size).cpu().numpy()  # (b, total_Q, h)
     labels = label.view(-1, total_Q).cpu().numpy() # (b, total_Q)
+
+    if not os.path.exists('image/'):
+        os.makedirs('image/')
 
     for i in range(plot_num):
         support = support_emb[i] # (N, K, h)
