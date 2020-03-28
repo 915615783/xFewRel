@@ -13,11 +13,12 @@ def l2norm(X):
 
 class ProtoNorm(fewshot_re_kit.framework.FewShotREModel):
     
-    def __init__(self, sentence_encoder, hidden_size=230):
+    def __init__(self, sentence_encoder, hidden_size=230, dropout=0.5):
         fewshot_re_kit.framework.FewShotREModel.__init__(self, sentence_encoder)
         self.hidden_size = hidden_size
         # self.fc = nn.Linear(hidden_size, hidden_size)
-        self.drop = nn.Dropout()
+        print('dropout:', dropout)
+        self.drop = nn.Dropout(dropout)
 
     def __dist__(self, x, y, dim):
         return (torch.pow(x - y, 2)).sum(dim)

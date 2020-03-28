@@ -15,6 +15,7 @@ class OrSoftmax(fewshot_re_kit.framework.FewShotREModel):
         self.hidden_size = hidden_size
         self.num_classes = num_classes
         self.fc1 = nn.Linear(hidden_size, num_classes)
+        print('dropout:', dropout)
         self.drop = nn.Dropout(dropout)
 
     def __dist__(self, x, y, dim):

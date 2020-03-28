@@ -12,6 +12,7 @@ class Siamese(fewshot_re_kit.framework.FewShotREModel):
         fewshot_re_kit.framework.FewShotREModel.__init__(self, sentence_encoder)
         self.hidden_size = hidden_size
         self.normalize = nn.LayerNorm(normalized_shape=hidden_size)
+        print('dropout:', dropout)
         self.drop = nn.Dropout(dropout)
 
     def forward(self, support, query, N, K, total_Q, label=None, is_plot=False):
