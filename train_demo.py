@@ -188,7 +188,7 @@ def main():
     elif model_name == 'pair':
         model = Pair(sentence_encoder, hidden_size=opt.hidden_size)
     elif model_name == 'orsoftmax':
-        model = OrSoftmax(sentence_encoder, hidden_size=opt.hidden_size, num_classes=train_data_loader.dataset.num_classes)
+        model = OrSoftmax(sentence_encoder, hidden_size=opt.hidden_size, num_classes=num_classes)
     else:
         raise NotImplementedError
     
