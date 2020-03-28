@@ -20,6 +20,7 @@ import os
 
 def main():
     parser = argparse.ArgumentParser()
+    parser.add_argument('--is_plot', default=True, type=bool, help='the hidden size must be 2')
     parser.add_argument('--train', default='train_wiki',
             help='train file')
     parser.add_argument('--val', default='val_wiki',
@@ -211,7 +212,7 @@ def main():
         framework.train(model, prefix, batch_size, trainN, N, K, Q,
                 pytorch_optim=pytorch_optim, load_ckpt=opt.load_ckpt, save_ckpt=ckpt,
                 na_rate=opt.na_rate, val_step=opt.val_step, fp16=opt.fp16, pair=opt.pair, 
-                train_iter=opt.train_iter, val_iter=opt.val_iter, bert_optim=bert_optim)
+                train_iter=opt.train_iter, val_iter=opt.val_iter, bert_optim=bert_optim, is_plot=opt.is_plot)
     else:
         ckpt = opt.load_ckpt
 

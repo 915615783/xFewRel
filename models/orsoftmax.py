@@ -6,6 +6,7 @@ import torch
 from torch import autograd, optim, nn
 from torch.autograd import Variable
 from torch.nn import functional as F
+from ..plotTool import plot2D
 
 class OrSoftmax(fewshot_re_kit.framework.FewShotREModel):
 
@@ -22,7 +23,7 @@ class OrSoftmax(fewshot_re_kit.framework.FewShotREModel):
     def __batch_dist__(self, S, Q):
         return self.__dist__(S.unsqueeze(1), Q.unsqueeze(2), 3)
 
-    def forward(self, support, query, N, K, total_Q):
+    def forward(self, support, query, N, K, total_Q, label=None, is_plot=False):
         '''
         support: Inputs of the support set.
         query: Inputs of the query set.
@@ -45,6 +46,10 @@ class OrSoftmax(fewshot_re_kit.framework.FewShotREModel):
         else:
             support_emb = self.sentence_encoder(support) # (B * N * K, D), where D is the hidden size
             query_emb = self.sentence_encoder(query) # (B * total_Q, D)
+
+            if is_plot:
+                plot2D(support_emb, query_emb, label, N, K, total_Q, self.hidden_size)
+
             support = self.drop(support_emb)
             query = self.drop(query_emb)
             support = support.view(-1, N, K, self.hidden_size) # (B, N, K, D)

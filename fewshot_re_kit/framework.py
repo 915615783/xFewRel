@@ -120,7 +120,8 @@ class FewShotREFramework:
               fp16=False,
               pair=False,
               adv_dis_lr=1e-1,
-              adv_enc_lr=1e-1):
+              adv_enc_lr=1e-1, 
+              is_plot=False):
         '''
         model: a FewShotREModel instance
         model_name: Name of the model
@@ -275,7 +276,7 @@ class FewShotREFramework:
 
                 if (it + 1) % val_step == 0:
                     acc = self.eval(model, B, N_for_eval, K, Q, val_iter, 
-                            na_rate=na_rate, pair=pair)
+                            na_rate=na_rate, pair=pair, is_plot=is_plot)
                     model.train()
                     if acc > best_acc:
                         print('Best checkpoint')
@@ -296,7 +297,8 @@ class FewShotREFramework:
             eval_iter,
             na_rate=0,
             pair=False,
-            ckpt=None): 
+            ckpt=None,
+            is_plot=False): 
         '''
         model: a FewShotREModel instance
         B: Batch size
@@ -340,7 +342,10 @@ class FewShotREFramework:
                         for k in query:
                             query[k] = query[k].cuda()
                         label = label.cuda()
-                    logits, pred = model(support, query, N, K, Q * N + Q * na_rate)
+                    if is_plot:
+                        logits, pred = model(support, query, N, K, Q * N + Q * na_rate, label=label, is_plot=True)
+                    else:
+                        logits, pred = model(support, query, N, K, Q * N + Q * na_rate)
 
                 right = model.accuracy(pred, label)
                 iter_right += self.item(right.data)
@@ -350,3 +355,6 @@ class FewShotREFramework:
                 sys.stdout.flush()
             print("")
         return iter_right / iter_sample
+
+
+
