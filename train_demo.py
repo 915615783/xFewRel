@@ -17,7 +17,6 @@ import numpy as np
 import json
 import argparse
 import os
-# 123
 
 def main():
     parser = argparse.ArgumentParser()
