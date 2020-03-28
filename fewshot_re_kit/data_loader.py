@@ -361,6 +361,7 @@ class FewRelDatasetForNormalSoftmax(data.Dataset):
             label = self.class2id[q['rel']]
             self.__additem__(query_set, word, pos1, pos2, mask)
             query_label.append(label)
+        self.__additem__(support_set, word, pos1, pos2, mask)  # the torch.stack cant process an empty torch, damn it!
         return support_set, query_set, query_label
     
     def __len__(self):
