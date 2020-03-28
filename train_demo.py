@@ -63,7 +63,7 @@ def main():
            help='NA rate (NA = Q * na_rate)')
     parser.add_argument('--grad_iter', default=1, type=int,
            help='accumulate gradient every x iterations')
-    parser.add_argument('--optim', default='sgd',
+    parser.add_argument('--optim', default='adamw',
            help='sgd / adam / adamw')
     parser.add_argument('--hidden_size', default=2, type=int,    # hidden_size is here -----------------------------
            help='hidden size')
