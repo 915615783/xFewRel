@@ -45,7 +45,7 @@ def main():
             help='num of iters in validation')
     parser.add_argument('--test_iter', default=10000, type=int,
             help='num of iters in testing')
-    parser.add_argument('--val_step', default=500, type=int,
+    parser.add_argument('--val_step', default=1000, type=int,
            help='val after training how many iters')
     parser.add_argument('--model', default='orsoftmax',
             help='model name (orsoftmax)')
