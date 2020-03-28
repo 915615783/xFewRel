@@ -5,7 +5,7 @@ import torch
 from torch import autograd, optim, nn
 from torch.autograd import Variable
 from torch.nn import functional as F
-
+from plotTool import plot2D
 class Siamese(fewshot_re_kit.framework.FewShotREModel):
     
     def __init__(self, sentence_encoder, hidden_size=230, dropout=0):
@@ -14,7 +14,7 @@ class Siamese(fewshot_re_kit.framework.FewShotREModel):
         self.normalize = nn.LayerNorm(normalized_shape=hidden_size)
         self.drop = nn.Dropout(dropout)
 
-    def forward(self, support, query, N, K, total_Q):
+    def forward(self, support, query, N, K, total_Q, label=None, is_plot=False):
         '''
         support: Inputs of the support set.
         query: Inputs of the query set.
@@ -25,6 +25,9 @@ class Siamese(fewshot_re_kit.framework.FewShotREModel):
 
         support = self.sentence_encoder(support) # (B * N * K, D), where D is the hidden size
         query = self.sentence_encoder(query) # (B * total_Q, D)
+
+        if is_plot:
+            plot2D(support, query, label, N, K, total_Q, self.hidden_size)
 
         # Layer Norm
         support = self.normalize(support)
