@@ -342,7 +342,7 @@ class FewShotREFramework:
                         for k in query:
                             query[k] = query[k].cuda()
                         label = label.cuda()
-                    if is_plot:
+                    if is_plot and (it<2):
                         logits, pred = model(support, query, N, K, Q * N + Q * na_rate, label=label, is_plot=True)
                     else:
                         logits, pred = model(support, query, N, K, Q * N + Q * na_rate)
