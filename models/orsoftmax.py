@@ -32,9 +32,10 @@ class OrSoftmax(fewshot_re_kit.framework.FewShotREModel):
         '''
         # using ordinary softmax to train
         if self.training:
-            Q = total_Q / N
-            assert int(Q) == Q  # Q must be int
-            Q = int(Q)
+            # Q = total_Q / N
+            # assert int(Q) == Q  # Q must be int
+            # Q = int(Q)
+            Q = 25
             query_emb = self.sentence_encoder(query) # (B * Q, D)
             query = self.drop(query_emb)
             logits = self.fc1(query).view(-1, Q, self.num_classes)
