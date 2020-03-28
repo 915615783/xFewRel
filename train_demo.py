@@ -140,7 +140,7 @@ def main():
     else:
         if model_name == 'orsoftmax':
             train_data_loader, num_classes = get_loader(opt.train, sentence_encoder,
-                    N=trainN, K=K, Q=Q, na_rate=opt.na_rate, batch_size=batch_size) 
+                    N=trainN, K=K, Q=Q, na_rate=opt.na_rate, batch_size=batch_size, is_orsoftmax=True) 
         else:
             train_data_loader = get_loader(opt.train, sentence_encoder,
                     N=trainN, K=K, Q=Q, na_rate=opt.na_rate, batch_size=batch_size)
@@ -188,7 +188,7 @@ def main():
     elif model_name == 'pair':
         model = Pair(sentence_encoder, hidden_size=opt.hidden_size)
     elif model_name == 'orsoftmax':
-        model = OrSoftmax(sentence_encoder, hidden_size=opt.hidden_size, num_classes=num_classes)
+        model = OrSoftmax(sentence_encoder, hidden_size=opt.hidden_size, num_classes=train_data_loader.dataset.num_classes)
     else:
         raise NotImplementedError
     

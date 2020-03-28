@@ -362,4 +362,7 @@ class FewRelDatasetForNormalSoftmax(data.Dataset):
             self.__additem__(query_set, word, pos1, pos2, mask)
             query_label.append(label)
         return support_set, query_set, query_label
+    
+    def __len__(self):
+        return 1000000000
 
