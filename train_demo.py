@@ -34,7 +34,7 @@ def main():
             help='N way')
     parser.add_argument('--K', default=5, type=int,
             help='K shot')
-    parser.add_argument('--Q', default=25, type=int,
+    parser.add_argument('--Q', default=5, type=int,
             help='Num of query per class')
     parser.add_argument('--batch_size', default=10, type=int,
             help='batch size')
@@ -46,7 +46,7 @@ def main():
             help='num of iters in testing')
     parser.add_argument('--val_step', default=500, type=int,
            help='val after training how many iters')
-    parser.add_argument('--model', default='orsoftmax',
+    parser.add_argument('--model', default='proto',
             help='model name (orsoftmax)')
     parser.add_argument('--encoder', default='cnn',
             help='encoder: cnn or bert or roberta')
