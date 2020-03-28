@@ -19,10 +19,10 @@ def plot2D(support_emb, query_emb, label, N, K, total_Q, hidden_size, plot_num=2
         query = query_emb[i] # (total_Q, h)
         label = labels[i] # (total_Q)
         # plot support
-        for n in N:
+        for n in range(N):
             plt.scatter(support[n, :, 0], support[n, :, 1], c=colors[n], marker='^')
         # plot query
-        for q in total_Q:
+        for q in range(total_Q):
             plt.scatter(query[q, 0], query[q, 1], c=colors[labels[q]], markers='.')
         plt.show()
 
