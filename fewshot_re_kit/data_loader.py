@@ -114,6 +114,8 @@ def get_loader(name, encoder, N, K, Q, batch_size,
             pin_memory=True,
             num_workers=num_workers,
             collate_fn=collate_fn)
+    if is_orsoftmax:
+        return iter(data_loader), dataset.num_classes
     return iter(data_loader)
 
 class FewRelDatasetPair(data.Dataset):

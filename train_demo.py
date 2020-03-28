@@ -46,7 +46,7 @@ def main():
             help='num of iters in testing')
     parser.add_argument('--val_step', default=500, type=int,
            help='val after training how many iters')
-    parser.add_argument('--model', default='proto',
+    parser.add_argument('--model', default='orsoftmax',
             help='model name (orsoftmax)')
     parser.add_argument('--encoder', default='cnn',
             help='encoder: cnn or bert or roberta')
@@ -139,7 +139,7 @@ def main():
 
     else:
         if model_name == 'orsoftmax':
-            train_data_loader = get_loader(opt.train, sentence_encoder,
+            train_data_loader, num_classes = get_loader(opt.train, sentence_encoder,
                     N=trainN, K=K, Q=Q, na_rate=opt.na_rate, batch_size=batch_size) 
         else:
             train_data_loader = get_loader(opt.train, sentence_encoder,
@@ -188,7 +188,7 @@ def main():
     elif model_name == 'pair':
         model = Pair(sentence_encoder, hidden_size=opt.hidden_size)
     elif model_name == 'orsoftmax':
-        model = OrSoftmax(sentence_encoder, hidden_size=opt.hidden_size, train_data_loader.dataset.num_classes)
+        model = OrSoftmax(sentence_encoder, hidden_size=opt.hidden_size, num_classes=num_classes)
     else:
         raise NotImplementedError
     
