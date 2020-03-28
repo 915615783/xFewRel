@@ -9,7 +9,7 @@ from torch.nn import functional as F
 
 class OrSoftmax(fewshot_re_kit.framework.FewShotREModel):
 
-    def __init__(self, sentence_encoder, num_classes, hidden_size=230, dropout=0.5):
+    def __init__(self, sentence_encoder, num_classes, hidden_size=230, dropout=0):
         fewshot_re_kit.framework.FewShotREModel.__init__(self, sentence_encoder)
         self.hidden_size = hidden_size
         self.num_classes = num_classes

@@ -34,7 +34,7 @@ def main():
             help='N way')
     parser.add_argument('--K', default=5, type=int,
             help='K shot')
-    parser.add_argument('--Q', default=5, type=int,
+    parser.add_argument('--Q', default=10, type=int,
             help='Num of query per class')
     parser.add_argument('--batch_size', default=10, type=int,
             help='batch size')
