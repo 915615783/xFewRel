@@ -6,7 +6,7 @@ import torch
 from torch import autograd, optim, nn
 from torch.autograd import Variable
 from torch.nn import functional as F
-from ..plotTool import plot2D
+from plotTool import plot2D
 
 class OrSoftmax(fewshot_re_kit.framework.FewShotREModel):
 
