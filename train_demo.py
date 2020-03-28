@@ -9,6 +9,7 @@ from models.metanet import MetaNet
 from models.siamese import Siamese
 from models.pair import Pair
 from models.d import Discriminator
+from models.orsoftmax import OrSoftmax
 import sys
 import torch
 from torch import optim, nn
@@ -46,7 +47,7 @@ def main():
     parser.add_argument('--val_step', default=500, type=int,
            help='val after training how many iters')
     parser.add_argument('--model', default='proto',
-            help='model name')
+            help='model name (orsoftmax)')
     parser.add_argument('--encoder', default='cnn',
             help='encoder: cnn or bert or roberta')
     parser.add_argument('--max_length', default=128, type=int,
@@ -135,9 +136,15 @@ def main():
                 N=N, K=K, Q=Q, na_rate=opt.na_rate, batch_size=batch_size, encoder_name=encoder_name)
         test_data_loader = get_loader_pair(opt.test, sentence_encoder,
                 N=N, K=K, Q=Q, na_rate=opt.na_rate, batch_size=batch_size, encoder_name=encoder_name)
+
     else:
-        train_data_loader = get_loader(opt.train, sentence_encoder,
-                N=trainN, K=K, Q=Q, na_rate=opt.na_rate, batch_size=batch_size)
+        if model_name == 'orsoftmax':
+            train_data_loader = get_loader(opt.train, sentence_encoder,
+                    N=trainN, K=K, Q=Q, na_rate=opt.na_rate, batch_size=batch_size) 
+        else:
+            train_data_loader = get_loader(opt.train, sentence_encoder,
+                    N=trainN, K=K, Q=Q, na_rate=opt.na_rate, batch_size=batch_size)
+
         val_data_loader = get_loader(opt.val, sentence_encoder,
                 N=N, K=K, Q=Q, na_rate=opt.na_rate, batch_size=batch_size)
         test_data_loader = get_loader(opt.test, sentence_encoder,
@@ -180,6 +187,8 @@ def main():
         model = Siamese(sentence_encoder, hidden_size=opt.hidden_size, dropout=opt.dropout)
     elif model_name == 'pair':
         model = Pair(sentence_encoder, hidden_size=opt.hidden_size)
+    elif model_name == 'orsoftmax':
+        model = OrSoftmax(sentence_encoder, hidden_size=opt.hidden_size, train_data_loader.dataset.num_classes)
     else:
         raise NotImplementedError
     
