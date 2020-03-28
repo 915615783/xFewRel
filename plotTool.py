@@ -7,10 +7,11 @@ import torch
 # Use it in model when you check the model is evaling
 
 colors = ['blue', 'green', 'm', 'yellow', 'brown', 'red']
-count = 0
+figcount = 0
 
 def plot2D(support_emb, query_emb, label, N, K, total_Q, hidden_size, plot_num=2):
     '''hidden size must be 2'''
+    global figcount
     support_emb = support_emb.view(-1, N, K, hidden_size).cpu().numpy() # (b, N, K, h)
     query_emb = query_emb.view(-1, total_Q, hidden_size).cpu().numpy()  # (b, total_Q, h)
     labels = label.view(-1, total_Q).cpu().numpy() # (b, total_Q)
@@ -24,8 +25,8 @@ def plot2D(support_emb, query_emb, label, N, K, total_Q, hidden_size, plot_num=2
             plt.scatter(support[n, :, 0], support[n, :, 1], c=colors[n], marker='^')
         # plot query
         plt.scatter(query[:, 0], query[:, 1], c=[colors[label[q]] for q in range(total_Q)], marker='.')
-        plt.savefig('%d.png'%count, dpi=300)
-        count += 1
+        plt.savefig('%d.png'%figcount, dpi=300)
+        figcount += 1
         plt.show()
 
 
