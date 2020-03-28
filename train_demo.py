@@ -189,6 +189,7 @@ def main():
         model = Pair(sentence_encoder, hidden_size=opt.hidden_size)
     elif model_name == 'orsoftmax':
         model = OrSoftmax(sentence_encoder, hidden_size=opt.hidden_size, num_classes=num_classes)
+        print("num_calsses: %d" % num_classes)
     else:
         raise NotImplementedError
     
