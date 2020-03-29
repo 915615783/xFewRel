@@ -4,7 +4,7 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 import math
 from torch import optim
-use_simple_cnn = 0
+use_simple_cnn = 1  # choose simple cnn or complicated cnn
 if use_simple_cnn:
     class Encoder(nn.Module):
         def __init__(self, max_length, word_embedding_dim=50, pos_embedding_dim=5, hidden_size=230):
