@@ -20,7 +20,7 @@ import os
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--is_plot', default=True, type=bool, help='the hidden size must be 2')
+    parser.add_argument('--is_plot', default=False, type=bool, help='the hidden size must be 2')
     parser.add_argument('--train', default='train_wiki',
             help='train file')
     parser.add_argument('--val', default='val_wiki',
@@ -65,7 +65,7 @@ def main():
            help='accumulate gradient every x iterations')
     parser.add_argument('--optim', default='sgd',
            help='sgd / adam / adamw')
-    parser.add_argument('--hidden_size', default=2, type=int,    # hidden_size is here -----------------------------
+    parser.add_argument('--hidden_size', default=32, type=int,    # hidden_size is here -----------------------------
            help='hidden size')
     parser.add_argument('--load_ckpt', default=None,
            help='load ckpt')
