@@ -35,9 +35,9 @@ def main():
             help='N way')
     parser.add_argument('--K', default=5, type=int,
             help='K shot')
-    parser.add_argument('--Q', default=25, type=int,
+    parser.add_argument('--Q', default=10, type=int,
             help='Num of query per class')
-    parser.add_argument('--batch_size', default=10, type=int,
+    parser.add_argument('--batch_size', default=5, type=int,
             help='batch size')
     parser.add_argument('--train_iter', default=30000, type=int,
             help='num of iters in training')
@@ -47,7 +47,7 @@ def main():
             help='num of iters in testing')
     parser.add_argument('--val_step', default=1000, type=int,
            help='val after training how many iters')
-    parser.add_argument('--model', default='orsoftmax',
+    parser.add_argument('--model', default='proto',
             help='model name (orsoftmax)')
     parser.add_argument('--encoder', default='cnn',
             help='encoder: cnn or bert or roberta')
@@ -95,6 +95,10 @@ def main():
     print("model: {}".format(model_name))
     print("encoder: {}".format(encoder_name))
     print("max_length: {}".format(max_length))
+    print("hidden_size: {}".format(hidden_size))
+    print("Q: {}".format(Q))
+    print("batch_size: {}".format(batch_size))
+
     
     if encoder_name == 'cnn':
         try:

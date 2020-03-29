@@ -9,7 +9,7 @@ from plotTool import plot2D
 
 class Proto(fewshot_re_kit.framework.FewShotREModel):
     
-    def __init__(self, sentence_encoder, hidden_size=230, dropout=0.5):
+    def __init__(self, sentence_encoder, hidden_size=230, dropout=0):
         fewshot_re_kit.framework.FewShotREModel.__init__(self, sentence_encoder)
         self.hidden_size = hidden_size
         # self.fc = nn.Linear(hidden_size, hidden_size)
