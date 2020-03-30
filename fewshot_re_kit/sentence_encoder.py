@@ -63,7 +63,7 @@ class BERTSentenceEncoder(nn.Module):
         nn.Module.__init__(self)
         self.bert = BertModel.from_pretrained(pretrain_path)
         self.max_length = max_length
-        self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+        self.tokenizer = BertTokenizer.from_pretrained(pretrain_path + '/vocab.txt')
 
     def forward(self, inputs):
         _, x = self.bert(inputs['word'], attention_mask=inputs['mask'])
@@ -117,7 +117,7 @@ class BERTPAIRSentenceEncoder(nn.Module):
                 pretrain_path,
                 num_labels=2)
         self.max_length = max_length
-        self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+        self.tokenizer = BertTokenizer.from_pretrained(pretrain_path + 'vocab.txt')
 
     def forward(self, inputs):
         x = self.bert(inputs['word'], token_type_ids=inputs['seg'], attention_mask=inputs['mask'])[0]

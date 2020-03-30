@@ -18,6 +18,8 @@ import json
 import argparse
 import os
 
+bert_pretrain_path = 'pretrain/bert-base-uncased'
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--is_plot', default=False, type=bool, help='the hidden size must be 2')
@@ -35,21 +37,21 @@ def main():
             help='N way')
     parser.add_argument('--K', default=5, type=int,
             help='K shot')
-    parser.add_argument('--Q', default=10, type=int,
+    parser.add_argument('--Q', default=5, type=int,
             help='Num of query per class')
-    parser.add_argument('--batch_size', default=5, type=int,
+    parser.add_argument('--batch_size', default=2, type=int,
             help='batch size')
     parser.add_argument('--train_iter', default=30000, type=int,
             help='num of iters in training')
-    parser.add_argument('--val_iter', default=300, type=int,
+    parser.add_argument('--val_iter', default=100, type=int,
             help='num of iters in validation')
     parser.add_argument('--test_iter', default=10000, type=int,
             help='num of iters in testing')
-    parser.add_argument('--val_step', default=1000, type=int,
+    parser.add_argument('--val_step', default=500, type=int,
            help='val after training how many iters')
-    parser.add_argument('--model', default='orsoftmax',
+    parser.add_argument('--model', default='proto',
             help='model name (orsoftmax)')
-    parser.add_argument('--encoder', default='cnn',
+    parser.add_argument('--encoder', default='bert',
             help='encoder: cnn or bert or roberta')
     parser.add_argument('--max_length', default=128, type=int,
            help='max length')
@@ -65,7 +67,7 @@ def main():
            help='accumulate gradient every x iterations')
     parser.add_argument('--optim', default='sgd',
            help='sgd / adam / adamw')
-    parser.add_argument('--hidden_size', default=32, type=int,    # hidden_size is here -----------------------------
+    parser.add_argument('--hidden_size', default=768, type=int,    # hidden_size is here -----------------------------
            help='hidden size')
     parser.add_argument('--load_ckpt', default=None,
            help='load ckpt')
@@ -90,6 +92,7 @@ def main():
     encoder_name = opt.encoder
     max_length = opt.max_length
     hidden_size = opt.hidden_size
+
     
     print("{}-way-{}-shot Few-Shot Relation Classification".format(N, K))
     print("model: {}".format(model_name))
@@ -113,6 +116,12 @@ def main():
                 hidden_size=hidden_size)
     elif encoder_name == 'bert':
         pretrain_ckpt = opt.pretrain_ckpt or 'bert-base-uncased'
+
+        # liu add
+        if pretrain_ckpt == 'bert-base-uncased'
+        pretrain_ckpt = bert_pretrain_path
+        print('Using bert and use the pretrain param from %s.' % pretrain_ckpt)
+
         if opt.pair:
             sentence_encoder = BERTPAIRSentenceEncoder(
                     pretrain_ckpt,
