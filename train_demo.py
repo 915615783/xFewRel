@@ -118,7 +118,7 @@ def main():
         pretrain_ckpt = opt.pretrain_ckpt or 'bert-base-uncased'
 
         # liu add
-        if pretrain_ckpt == 'bert-base-uncased'
+        if pretrain_ckpt == 'bert-base-uncased':
         pretrain_ckpt = bert_pretrain_path
         print('Using bert and use the pretrain param from %s.' % pretrain_ckpt)
 
