@@ -31,15 +31,15 @@ def main():
             help='test file')
     parser.add_argument('--adv', default=None,
             help='adv file')
-    parser.add_argument('--trainN', default=10, type=int,
+    parser.add_argument('--trainN', default=5, type=int,
             help='N in train')
     parser.add_argument('--N', default=5, type=int,
             help='N way')
     parser.add_argument('--K', default=5, type=int,
             help='K shot')
-    parser.add_argument('--Q', default=5, type=int,
+    parser.add_argument('--Q', default=100, type=int,
             help='Num of query per class')
-    parser.add_argument('--batch_size', default=2, type=int,
+    parser.add_argument('--batch_size', default=1, type=int,
             help='batch size')
     parser.add_argument('--train_iter', default=30000, type=int,
             help='num of iters in training')
@@ -49,9 +49,9 @@ def main():
             help='num of iters in testing')
     parser.add_argument('--val_step', default=500, type=int,
            help='val after training how many iters')
-    parser.add_argument('--model', default='proto',
+    parser.add_argument('--model', default='orsoftmax',
             help='model name (orsoftmax)')
-    parser.add_argument('--encoder', default='bert',
+    parser.add_argument('--encoder', default='cnn',
             help='encoder: cnn or bert or roberta')
     parser.add_argument('--max_length', default=128, type=int,
            help='max length')
@@ -61,13 +61,13 @@ def main():
            help='weight decay')
     parser.add_argument('--dropout', default=0.0, type=float,
            help='dropout rate')
-    parser.add_argument('--na_rate', default=1, type=int,
+    parser.add_argument('--na_rate', default=0, type=int,
            help='NA rate (NA = Q * na_rate)')
     parser.add_argument('--grad_iter', default=1, type=int,
            help='accumulate gradient every x iterations')
     parser.add_argument('--optim', default='sgd',
            help='sgd / adam / adamw')
-    parser.add_argument('--hidden_size', default=768, type=int,    # hidden_size is here -----------------------------
+    parser.add_argument('--hidden_size', default=128, type=int,    # hidden_size is here -----------------------------
            help='hidden size')
     parser.add_argument('--load_ckpt', default=None,
            help='load ckpt')
@@ -119,7 +119,7 @@ def main():
 
         # liu add
         if pretrain_ckpt == 'bert-base-uncased':
-        pretrain_ckpt = bert_pretrain_path
+            pretrain_ckpt = bert_pretrain_path
         print('Using bert and use the pretrain param from %s.' % pretrain_ckpt)
 
         if opt.pair:
