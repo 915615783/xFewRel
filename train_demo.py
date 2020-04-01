@@ -31,7 +31,7 @@ def main():
             help='test file')
     parser.add_argument('--adv', default=None,
             help='adv file')
-    parser.add_argument('--trainN', default=10, type=int,
+    parser.add_argument('--trainN', default=5, type=int,
             help='N in train')
     parser.add_argument('--N', default=5, type=int,
             help='N way')
@@ -39,7 +39,7 @@ def main():
             help='K shot')
     parser.add_argument('--Q', default=10, type=int,
             help='Num of query per class')
-    parser.add_argument('--batch_size', default=5, type=int,
+    parser.add_argument('--batch_size', default=1, type=int,
             help='batch size')
     parser.add_argument('--train_iter', default=30000, type=int,
             help='num of iters in training')
@@ -154,20 +154,25 @@ def main():
 
     else:
         if model_name == 'orsoftmax':
-            train_data_loader, num_classes = get_loader(opt.train, sentence_encoder,
+            print('aaa')
+            train_data_loader, num_classes, dataset = get_loader(opt.train, sentence_encoder,
                     N=trainN, K=K, Q=Q, na_rate=opt.na_rate, batch_size=batch_size, is_orsoftmax=True) 
+            print('bbb')
         else:
-            train_data_loader = get_loader(opt.train, sentence_encoder,
+            train_data_loader, dataset = get_loader(opt.train, sentence_encoder,
                     N=trainN, K=K, Q=Q, na_rate=opt.na_rate, batch_size=batch_size)
 
-        val_data_loader = get_loader(opt.val, sentence_encoder,
+        val_data_loader, _ = get_loader(opt.val, sentence_encoder,
                 N=N, K=K, Q=Q, na_rate=opt.na_rate, batch_size=batch_size)
-        test_data_loader = get_loader(opt.test, sentence_encoder,
+        test_data_loader, _ = get_loader(opt.test, sentence_encoder,
                 N=N, K=K, Q=Q, na_rate=opt.na_rate, batch_size=batch_size)
         if opt.adv:
            adv_data_loader = get_loader_unsupervised(opt.adv, sentence_encoder,
                 N=trainN, K=K, Q=Q, na_rate=opt.na_rate, batch_size=batch_size)
-   
+
+    print(dataset.get_sample_support(1))
+    return 
+
     if opt.optim == 'sgd':
         pytorch_optim = optim.SGD
     elif opt.optim == 'adam':

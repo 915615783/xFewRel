@@ -80,6 +80,31 @@ class FewRelDataset(data.Dataset):
         query_label += [self.N] * Q_na
 
         return support_set, query_set, query_label
+
+    def sample_all_support(self, index, n_sample=10):
+        target_classes = self.classes
+        support_set = {'word': [], 'pos1': [], 'pos2': [], 'mask': [] }
+        query_set = {'word': [], 'pos1': [], 'pos2': [], 'mask': [] }
+        query_label = []
+
+        for i, class_name in enumerate(target_classes):
+            indices = np.random.choice(
+                    list(range(len(self.json_data[class_name]))), 
+                    n_sample, False)
+            count = 0
+            for j in indices:
+                word, pos1, pos2, mask = self.__getraw__(
+                        self.json_data[class_name][j])
+                word = torch.tensor(word).long()
+                pos1 = torch.tensor(pos1).long()
+                pos2 = torch.tensor(pos2).long()
+                mask = torch.tensor(mask).long()
+                self.__additem__(query_set, word, pos1, pos2, mask)
+                count += 1
+
+            query_label += [i] * n_sample
+        self.__additem__(support_set, word, pos1, pos2, mask)
+        return support_set, query_set, query_label
     
     def __len__(self):
         return 1000000000
@@ -115,8 +140,8 @@ def get_loader(name, encoder, N, K, Q, batch_size,
             num_workers=num_workers,
             collate_fn=collate_fn)
     if is_orsoftmax:
-        return iter(data_loader), dataset.num_classes
-    return iter(data_loader)
+        return iter(data_loader), dataset.num_classes, dataset
+    return iter(data_loader), dataset
 
 class FewRelDatasetPair(data.Dataset):
     """
@@ -366,4 +391,29 @@ class FewRelDatasetForNormalSoftmax(data.Dataset):
     
     def __len__(self):
         return 1000000000
+
+    def sample_all_support(self, index, n_sample=10):
+        target_classes = self.classes
+        support_set = {'word': [], 'pos1': [], 'pos2': [], 'mask': [] }
+        query_set = {'word': [], 'pos1': [], 'pos2': [], 'mask': [] }
+        query_label = []
+
+        for i, class_name in enumerate(target_classes):
+            indices = np.random.choice(
+                    list(range(len(self.json_data[class_name]))), 
+                    n_sample, False)
+            count = 0
+            for j in indices:
+                word, pos1, pos2, mask = self.__getraw__(
+                        self.json_data[class_name][j])
+                word = torch.tensor(word).long()
+                pos1 = torch.tensor(pos1).long()
+                pos2 = torch.tensor(pos2).long()
+                mask = torch.tensor(mask).long()
+                self.__additem__(query_set, word, pos1, pos2, mask)
+                count += 1
+
+            query_label += [i] * n_sample
+        self.__additem__(support_set, word, pos1, pos2, mask)
+        return support_set, query_set, query_label
 
