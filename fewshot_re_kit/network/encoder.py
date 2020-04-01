@@ -50,10 +50,10 @@ else:
             self.max_length = max_length
             self.hidden_size = hidden_size
             self.embedding_dim = word_embedding_dim + pos_embedding_dim * 2
-            self.conv = nn.Conv1d(self.embedding_dim, self.hidden_size*40, 3, padding=1)
-            self.conv2 = nn.Conv1d(self.hidden_size*40, self.hidden_size*20, 3, padding=1)
-            self.conv3 = nn.Conv1d(self.hidden_size*20, self.hidden_size*10, 3, padding=1)
-            self.conv4 = nn.Conv1d(self.hidden_size*10, self.hidden_size, 3, padding=1)
+            self.conv = nn.Conv1d(self.embedding_dim, self.hidden_size*6, 3, padding=1)
+            self.conv2 = nn.Conv1d(self.hidden_size*6, self.hidden_size*4, 3, padding=1)
+            self.conv3 = nn.Conv1d(self.hidden_size*4, self.hidden_size*2, 3, padding=1)
+            self.conv4 = nn.Conv1d(self.hidden_size*2, self.hidden_size, 3, padding=1)
             self.pool = nn.MaxPool1d(max_length)
 
             # For PCNN
@@ -67,11 +67,11 @@ else:
 
         def cnn(self, inputs):
             x = self.conv(inputs.transpose(1, 2))
-            x = F.tanh(x)
+            x = F.relu(x)
             x = self.conv2(x)
-            x = F.tanh(x)
+            x = F.relu(x)
             x = self.conv3(x)
-            x = F.tanh(x)
+            x = F.relu(x)
             x = self.conv4(x)
             # x = F.tanh(x)
             x = self.pool(x)

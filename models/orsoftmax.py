@@ -10,11 +10,13 @@ from plotTool import plot2D
 
 class OrSoftmax(fewshot_re_kit.framework.FewShotREModel):
 
-    def __init__(self, sentence_encoder, num_classes, hidden_size=230, dropout=0):
+    def __init__(self, sentence_encoder, num_classes, hidden_size=230, dropout=0.5):
         fewshot_re_kit.framework.FewShotREModel.__init__(self, sentence_encoder)
         self.hidden_size = hidden_size
         self.num_classes = num_classes
         self.fc1 = nn.Linear(hidden_size, num_classes)
+        if sentence_encoder.encoder.hidden_size < 5:
+            dropout = 0
         print('dropout:', dropout)
         self.drop = nn.Dropout(dropout)
 
