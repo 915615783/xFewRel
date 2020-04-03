@@ -71,10 +71,15 @@ class FewShotREFramework:
         self.test_data_loader = test_data_loader
         self.adv_data_loader = adv_data_loader
         self.adv = adv
+        self.train_dataset = None
+        # self.eval_use_traindata = False
         if adv:
             self.adv_cost = nn.CrossEntropyLoss()
             self.d = d
             self.d.cuda()
+
+    def set_train_dataset(self, dataset):
+        self.train_dataset = dataset
     
     def __load_model__(self, ckpt):
         '''
@@ -275,6 +280,12 @@ class FewShotREFramework:
                 # sys.stdout.flush()
 
                 if (it + 1) % val_step == 0:
+                    # eval using traindata
+                    # self.eval_use_traindata = True
+                    # self.eval(model, B, N_for_eval, K, Q, val_iter, 
+                    #         na_rate=na_rate, pair=pair, is_plot=False)
+                    # self.eval_use_traindata = False
+
                     acc = self.eval(model, B, N_for_eval, K, Q, val_iter, 
                             na_rate=na_rate, pair=pair, is_plot=is_plot)
                     model.train()
@@ -322,6 +333,10 @@ class FewShotREFramework:
                     continue
                 own_state[name].copy_(param)
             eval_dataset = self.test_data_loader
+        
+        # if self.eval_use_traindata:
+        #     # print('Using train data')
+        #     eval_dataset = self.train_data_loader
 
         iter_right = 0.0
         iter_sample = 0.0
@@ -343,7 +358,7 @@ class FewShotREFramework:
                             query[k] = query[k].cuda()
                         label = label.cuda()
                     if is_plot and (it<2):
-                        logits, pred = model(support, query, N, K, Q * N + Q * na_rate, label=label, is_plot=True)
+                        logits, pred = model(support, query, N, K, Q * N + Q * na_rate, label=label, is_plot=True, train_dataset=self.train_dataset)
                     else:
                         logits, pred = model(support, query, N, K, Q * N + Q * na_rate)
 

@@ -28,10 +28,14 @@ class Embedding(nn.Module):
         word = inputs['word']
         pos1 = inputs['pos1']
         pos2 = inputs['pos2']
-        
-        x = torch.cat([self.word_embedding(word), 
-                            self.pos1_embedding(pos1), 
-                            self.pos2_embedding(pos2)], 2)
+        # print(word.size())
+        w = self.word_embedding(word)
+        p1 = self.pos1_embedding(pos1)
+        p2 = self.pos2_embedding(pos2)
+        # print(w.size(), p1.size(), p2.size())
+        # x = torch.cat([w, p1, p2, w*(F.sigmoid(p1[:, :, 0:1])), w*(F.sigmoid(p2[:, :, 0:1]))], 2)
+        # x = torch.cat([w*(F.relu((p1+p2).sum(-1).unsqueeze(-1)))], 2)
+        x = torch.cat([w, p1, p2], 2)
         return x
 
 

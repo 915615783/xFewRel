@@ -26,7 +26,7 @@ class OrSoftmax(fewshot_re_kit.framework.FewShotREModel):
     def __batch_dist__(self, S, Q):
         return self.__dist__(S.unsqueeze(1), Q.unsqueeze(2), 3)
 
-    def forward(self, support, query, N, K, total_Q, label=None, is_plot=False):
+    def forward(self, support, query, N, K, total_Q, label=None, is_plot=False, train_dataset=None):
         '''
         support: Inputs of the support set.
         query: Inputs of the query set.
@@ -51,7 +51,12 @@ class OrSoftmax(fewshot_re_kit.framework.FewShotREModel):
             query_emb = self.sentence_encoder(query) # (B * total_Q, D)
 
             if is_plot:
-                plot2D(support_emb, query_emb, label, N, K, total_Q, self.hidden_size)
+                if train_dataset != None:
+                    _, train_sample, train_label = train_dataset.sample_all_support()
+                    train_emb = self.sentence_encoder(train_sample)
+                    plot2D(support_emb, query_emb, label, N, K, total_Q, self.hidden_size, train_emb=train_emb, train_label=train_label)
+                else:
+                    plot2D(support_emb, query_emb, label, N, K, total_Q, self.hidden_size)
 
             support = self.drop(support_emb)
             query = self.drop(query_emb)

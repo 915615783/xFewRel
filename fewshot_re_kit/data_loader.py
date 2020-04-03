@@ -81,7 +81,7 @@ class FewRelDataset(data.Dataset):
 
         return support_set, query_set, query_label
 
-    def sample_all_support(self, index, n_sample=10):
+    def sample_all_support(self, index=None, n_sample=10):
         target_classes = self.classes
         support_set = {'word': [], 'pos1': [], 'pos2': [], 'mask': [] }
         query_set = {'word': [], 'pos1': [], 'pos2': [], 'mask': [] }
@@ -104,7 +104,8 @@ class FewRelDataset(data.Dataset):
 
             query_label += [i] * n_sample
         self.__additem__(support_set, word, pos1, pos2, mask)
-        return support_set, query_set, query_label
+        query_set = { x : torch.stack(y, 0) for x, y in query_set.items()}
+        return support_set, query_set, torch.tensor(query_label)
     
     def __len__(self):
         return 1000000000
@@ -392,7 +393,7 @@ class FewRelDatasetForNormalSoftmax(data.Dataset):
     def __len__(self):
         return 1000000000
 
-    def sample_all_support(self, index, n_sample=10):
+    def sample_all_support(self, index=None, n_sample=10):
         target_classes = self.classes
         support_set = {'word': [], 'pos1': [], 'pos2': [], 'mask': [] }
         query_set = {'word': [], 'pos1': [], 'pos2': [], 'mask': [] }
@@ -415,5 +416,7 @@ class FewRelDatasetForNormalSoftmax(data.Dataset):
 
             query_label += [i] * n_sample
         self.__additem__(support_set, word, pos1, pos2, mask)
-        return support_set, query_set, query_label
+        query_set = { x : torch.stack(y, 0) for x, y in query_set.items()}
+        # print(query_set['word'])
+        return support_set, query_set, torch.tensor(query_label)
 

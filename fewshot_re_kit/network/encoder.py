@@ -15,6 +15,8 @@ if use_simple_cnn:
             self.embedding_dim = word_embedding_dim + pos_embedding_dim * 2
             self.conv = nn.Conv1d(self.embedding_dim, self.hidden_size, 3, padding=1)
             self.pool = nn.MaxPool1d(max_length)
+            # self.linear = nn.Linear(10, 1)
+            # self.drop = nn.Dropout(0.5)
 
             # For PCNN
             self.mask_embedding = nn.Embedding(4, 3)
@@ -27,8 +29,12 @@ if use_simple_cnn:
 
         def cnn(self, inputs):
             x = self.conv(inputs.transpose(1, 2))
-            x = F.relu(x)
             x = self.pool(x)
+            # x = self.drop(x)
+            # x, _ = torch.topk(x, 10, dim=-1)
+            # x = F.tanh(x)
+            # x = self.linear(x) # n*hidden*1
+            x = F.relu(x)
             return x.squeeze(2) # n x hidden_size
 
         def pcnn(self, inputs, mask):

@@ -16,13 +16,24 @@ from torch import optim, nn
 import numpy as np
 import json
 import argparse
+import random
 import os
+
+def setup_seed(seed):
+     torch.manual_seed(seed)
+     torch.cuda.manual_seed_all(seed)
+     np.random.seed(seed)
+     random.seed(seed)
+     torch.backends.cudnn.deterministic = True
+# 设置随机数种子
+setup_seed(454)
 
 bert_pretrain_path = 'pretrain/bert-base-uncased'
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--is_plot', default=False, type=bool, help='the hidden size must be 2')
+    parser.add_argument('--draw_train_support', default=True, type=bool, help='draw training support')
+    parser.add_argument('--is_plot', default=True, type=bool, help='the hidden size must be 2')
     parser.add_argument('--train', default='train_wiki',
             help='train file')
     parser.add_argument('--val', default='val_wiki',
@@ -37,19 +48,19 @@ def main():
             help='N way')
     parser.add_argument('--K', default=5, type=int,
             help='K shot')
-    parser.add_argument('--Q', default=10, type=int,
+    parser.add_argument('--Q', default=5, type=int,
             help='Num of query per class')
-    parser.add_argument('--batch_size', default=1, type=int,
+    parser.add_argument('--batch_size', default=5, type=int,
             help='batch size')
     parser.add_argument('--train_iter', default=30000, type=int,
             help='num of iters in training')
-    parser.add_argument('--val_iter', default=100, type=int,
+    parser.add_argument('--val_iter', default=500, type=int,
             help='num of iters in validation')
-    parser.add_argument('--test_iter', default=10000, type=int,
+    parser.add_argument('--test_iter', default=2000, type=int,
             help='num of iters in testing')
-    parser.add_argument('--val_step', default=500, type=int,
+    parser.add_argument('--val_step', default=1000, type=int,
            help='val after training how many iters')
-    parser.add_argument('--model', default='orsoftmax',
+    parser.add_argument('--model', default='proto',
             help='model name (orsoftmax)')
     parser.add_argument('--encoder', default='cnn',
             help='encoder: cnn or bert or roberta')
@@ -93,6 +104,7 @@ def main():
     max_length = opt.max_length
     hidden_size = opt.hidden_size
 
+    dataset = None
     
     print("{}-way-{}-shot Few-Shot Relation Classification".format(N, K))
     print("model: {}".format(model_name))
@@ -154,10 +166,8 @@ def main():
 
     else:
         if model_name == 'orsoftmax':
-            print('aaa')
             train_data_loader, num_classes, dataset = get_loader(opt.train, sentence_encoder,
                     N=trainN, K=K, Q=Q, na_rate=opt.na_rate, batch_size=batch_size, is_orsoftmax=True) 
-            print('bbb')
         else:
             train_data_loader, dataset = get_loader(opt.train, sentence_encoder,
                     N=trainN, K=K, Q=Q, na_rate=opt.na_rate, batch_size=batch_size)
@@ -169,9 +179,6 @@ def main():
         if opt.adv:
            adv_data_loader = get_loader_unsupervised(opt.adv, sentence_encoder,
                 N=trainN, K=K, Q=Q, na_rate=opt.na_rate, batch_size=batch_size)
-
-    print(dataset.get_sample_support(1))
-    return 
 
     if opt.optim == 'sgd':
         pytorch_optim = optim.SGD
@@ -187,6 +194,10 @@ def main():
         framework = FewShotREFramework(train_data_loader, val_data_loader, test_data_loader, adv_data_loader, adv=opt.adv, d=d)
     else:
         framework = FewShotREFramework(train_data_loader, val_data_loader, test_data_loader)
+
+    if (dataset != None) and (opt.draw_train_support):
+        # for drawing image
+        framework.set_train_dataset(dataset)
         
     prefix = '-'.join([model_name, encoder_name, opt.train, opt.val, str(N), str(K)])
     if opt.adv is not None:

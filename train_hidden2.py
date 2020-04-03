@@ -1,15 +1,22 @@
-from transformers import BertTokenizer, BertModel
+# from transformers import BertTokenizer, BertModel
 
-# m = BertModel.from_pretrained('pretrain\\bert-base-uncased')
+# # m = BertModel.from_pretrained('pretrain\\bert-base-uncased')
 
-# print(m)
-t = BertTokenizer.from_pretrained('pretrain\\bert-base-uncased\\vocab.txt')
-print(t)
+# # print(m)
+# t = BertTokenizer.from_pretrained('pretrain\\bert-base-uncased\\vocab.txt')
+# print(t)
+import matplotlib.pyplot as plt
+import numpy as np
 
+x = np.random.randn(10000)
+y = np.random.randn(10000)
+print(plt.gca())
 
-
-
-
+import seaborn as sns
+# sns.set(style="white", color_codes=True)
+g = sns.jointplot(x, y, kind='kde')
+plt.gcf().axes[0].scatter(x, y, c='r', alpha=1, s=10)
+plt.show()
 
 
 
